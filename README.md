@@ -1,12 +1,11 @@
 # A Domain-Adaptive Deep Learning Approach for Microplastic Classification
 
-This repository provides supplementary material for the following publication:
+Code for comparing three domain adaptation methods — DANN, DSAN, and Deep CORAL — for classifying marine vs standard polymer spectra using a transformer architecture and reflectance micro-FTIR spectroscopy data.
 
-> M. Barker, T. Singha, M. Willans, M. Hackett, and D.-S. Pham, "A Domain-Adaptive Deep Learning Approach for Microplastic Classification," *Microplastics*, vol. 4, no. 4, p. 69, 2025. DOI: [10.3390/microplastics4040069](https://doi.org/10.3390/microplastics4040069)
+**Paper:** [A Domain-Adaptive Deep Learning Approach for Microplastic Classification](https://doi.org/10.3390/microplastics4040069)  
+**Authors:** Max Barker, Tanmay Singha, Meg Willans, Mark Hackett, Duc-Son Pham  
+**Journal:** Microplastics, 2025, 4(4), 69
 
-We compare three domain adaptation methods - DANN, DSAN, and Deep CORAL - for classifying marine vs standard polymer spectra using a transformer architecture and reflectance micro-FTIR spectroscopy data.
-
-> **Note:** A bottleneck layer has been added between the transformer encoder and the domain adaptation loss to address CUDA memory constraints in the CORAL and DSAN methods. This was introduced after publication to simplify execution, and also slightly improves standards accuracy compared to the reported results.
 
 ## Available in this repository
 
@@ -15,6 +14,8 @@ We compare three domain adaptation methods - DANN, DSAN, and Deep CORAL - for cl
 - CLI for training any method with configurable parameters
 
 If you find this useful, a citation or a star is appreciated.
+
+> **Note:** To address potential CUDA memory constraints in the CORAL and DSAN methods when running this code, a bottleneck layer has been added between the transformer encoder and the domain adaptation loss. This was introduced after publication to simplify execution, and also slightly improves standards accuracy compared to the reported results.
 
 ## Setup and Execution
 
