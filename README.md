@@ -1,10 +1,12 @@
 # A Domain-Adaptive Deep Learning Approach for Microplastic Classification
 
-Code for comparing three domain adaptation methods — DANN, DSAN, and Deep CORAL — for classifying marine vs standard polymer spectra using a transformer architecture and reflectance micro-FTIR spectroscopy data.
+This repository provides supplementary material for the following publication:
 
 **Paper:** [A Domain-Adaptive Deep Learning Approach for Microplastic Classification](https://doi.org/10.3390/microplastics4040069)  
 **Authors:** Max Barker, Tanmay Singha, Meg Willans, Mark Hackett, Duc-Son Pham  
 **Journal:** Microplastics, 2025, 4(4), 69
+
+The code from the paper compares three domain adaptation methods: DANN, DSAN, and Deep CORAL. Each can be used for classifying marine vs standard polymer spectra using a transformer architecture and reflectance micro-FTIR spectroscopy data. This work extends our earlier transformer for microplastic classification: [Barker et al., AJCAI 2022](https://link.springer.com/chapter/10.1007/978-3-031-22695-3_8) ([code](https://github.com/br3nr/microplastic-transformer)).
 
 
 ## Available in this repository
