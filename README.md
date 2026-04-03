@@ -41,8 +41,8 @@ Note: all dependencies can be found within the `pyproject.toml` should you wish 
 
 The data directory (default: `data/`) should contain two CSV files:
 
-- `marine_polymers.csv` — marine polymer FTIR spectra
-- `std_polymers.csv` — standard polymer FTIR spectra
+- `marine_polymers.csv`: marine polymer FTIR spectra
+- `std_polymers.csv`: standard polymer FTIR spectra
 
 Each CSV has a `polymerID` column (PP/PE) followed by wavenumber columns. The marine data is automatically split into train/val/test (70/15/15) with a fixed seed for reproducibility. Standards are used as-is for domain adaptation evaluation.
 
