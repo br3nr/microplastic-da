@@ -479,7 +479,7 @@ TRAINERS = {
 }
 
 
-def train(method, config=None, data_dir="data/no_fp"):
+def train(method, config=None, data_dir="data"):
     if method not in TRAINERS:
         raise ValueError(
             f"Unknown method: {method}. Choose from {list(TRAINERS.keys())}"

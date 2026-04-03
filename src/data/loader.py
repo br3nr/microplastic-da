@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import torch
+from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
 
 LABEL_DICT = {"PP": 0, "PE": 1}
@@ -24,10 +25,11 @@ class SpectraDataset(Dataset):
         return feature_tensor, label_tensor
 
 
-def load_data(path_x, path_y, sep=","):
-    data_x = pd.read_csv(path_x, header=0, dtype=float, sep=sep).to_numpy()
-    data_y = pd.read_csv(path_y, header=0).to_numpy()
-    return data_x, data_y
+def load_raw_csv(path):
+    df = pd.read_csv(path, header=0)
+    labels = df.iloc[:, 0].to_numpy()
+    features = df.iloc[:, 1:].to_numpy(dtype=float)
+    return features, labels
 
 
 def difference(dataset, interval=1):
@@ -70,91 +72,81 @@ def preprocess_data(data_x, data_y, shuffle=True, diff_order=6, diff_interval=4)
     return data_x, data_y
 
 
-def get_dataloader(
-    path_x, path_y, batch_size, shuffle=True, diff_order=6, diff_interval=4, sep=","
-):
-    data_x, data_y = load_data(path_x, path_y, sep=sep)
-    data_x, data_y = preprocess_data(
-        data_x,
-        data_y,
+def make_dataloader(features, labels, batch_size, shuffle, diff_order, diff_interval):
+    """Preprocess and wrap arrays into a DataLoader."""
+    features, labels = preprocess_data(
+        features,
+        labels,
         shuffle=shuffle,
         diff_order=diff_order,
         diff_interval=diff_interval,
     )
-
-    shape = data_x.shape[1]
-    dataset = SpectraDataset(data_x, data_y)
-    dataloader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=shuffle)
-
-    return dataloader, shape
-
-
-def get_test_dataloader(
-    path_x, path_y, batch_size, diff_order=6, diff_interval=4, sep=","
-):
-    data_x, data_y = load_data(path_x, path_y, sep=sep)
-    data_x, data_y = preprocess_data(
-        data_x,
-        data_y,
-        shuffle=False,
-        diff_order=diff_order,
-        diff_interval=diff_interval,
-    )
-
-    dataset = SpectraDataset(data_x, data_y)
-    dataloader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=False)
-
-    return dataloader
-
-
-class DataConfig:
-    """Configuration for data paths."""
-
-    def __init__(self, data_dir="data/no_fp"):
-        self.train_x = f"{data_dir}/train/train-x.csv"
-        self.train_y = f"{data_dir}/train/train-y.csv"
-        self.val_x = f"{data_dir}/val/val-x.csv"
-        self.val_y = f"{data_dir}/val/val-y.csv"
-        self.test_x = f"{data_dir}/test/test-x.csv"
-        self.test_y = f"{data_dir}/test/test-y.csv"
-        self.std_x = f"{data_dir}/std/std-x.csv"
-        self.std_y = f"{data_dir}/std/std-y.csv"
+    shape = features.shape[1]
+    dataset = SpectraDataset(features, labels)
+    loader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=shuffle)
+    return loader, shape
 
 
 def create_dataloaders(
-    data_dir="data/no_fp", batch_size=64, diff_order=6, diff_interval=4
+    data_dir="data",
+    batch_size=64,
+    diff_order=6,
+    diff_interval=4,
+    seed=42,
 ):
-    config = DataConfig(data_dir)
+    """Load raw CSVs, split marine into train/val/test, and return dataloaders."""
+    marine_x, marine_y = load_raw_csv(f"{data_dir}/marine_polymers.csv")
+    std_x, std_y = load_raw_csv(f"{data_dir}/std_polymers.csv")
 
-    train_loader, shape = get_dataloader(
-        config.train_x,
-        config.train_y,
+    # Split marine into train/val/test (70/15/15), stratified by label
+    train_x, temp_x, train_y, temp_y = train_test_split(
+        marine_x,
+        marine_y,
+        test_size=0.3,
+        stratify=marine_y,
+        random_state=seed,
+    )
+    val_x, test_x, val_y, test_y = train_test_split(
+        temp_x,
+        temp_y,
+        test_size=0.5,
+        stratify=temp_y,
+        random_state=seed,
+    )
+
+    print(
+        f"Data: {len(train_x)} train, {len(val_x)} val, {len(test_x)} test, {len(std_x)} std"
+    )
+
+    train_loader, shape = make_dataloader(
+        train_x,
+        train_y,
         batch_size,
+        shuffle=True,
         diff_order=diff_order,
         diff_interval=diff_interval,
     )
-
-    val_loader, _ = get_dataloader(
-        config.val_x,
-        config.val_y,
+    val_loader, _ = make_dataloader(
+        val_x,
+        val_y,
         batch_size,
         shuffle=False,
         diff_order=diff_order,
         diff_interval=diff_interval,
     )
-
-    test_loader = get_test_dataloader(
-        config.test_x,
-        config.test_y,
+    test_loader, _ = make_dataloader(
+        test_x,
+        test_y,
         batch_size,
+        shuffle=False,
         diff_order=diff_order,
         diff_interval=diff_interval,
     )
-
-    std_loader = get_test_dataloader(
-        config.std_x,
-        config.std_y,
+    std_loader, _ = make_dataloader(
+        std_x,
+        std_y,
         batch_size,
+        shuffle=False,
         diff_order=diff_order,
         diff_interval=diff_interval,
     )

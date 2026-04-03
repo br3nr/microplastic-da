@@ -4,7 +4,7 @@ Microplastic Domain Adaptation - Training CLI
 Usage:
     python main.py --method coral
     python main.py --method dann --wandb
-    python main.py --method dsan --data-dir data/with_fp
+    python main.py --method dsan --epochs 20
 """
 
 import argparse
@@ -33,8 +33,8 @@ def parse_args():
         "--data-dir",
         "-d",
         type=str,
-        default="data/no_fp",
-        help="Path to data directory",
+        default="data",
+        help="Path to data directory (must contain marine_polymers.csv and std_polymers.csv)",
     )
 
     # Training hyperparameters (None = use method default)
