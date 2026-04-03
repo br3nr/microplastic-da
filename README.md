@@ -74,8 +74,6 @@ Each DA method has tuned defaults (see `src/train/trainer.py`). You can override
 --diff-interval     Savitzky-Golay derivative interval       (default: 4)
 ```
 
-The defaults were tuned via multi-seed stability tests. See `experiments/` for the search and stability scripts.
-
 ## Figures
 
 <p align="center">
